@@ -5,7 +5,7 @@
   "main": "log.js",
   "scripts": {
     "build": "npm run clean && tsc",
-    "clean": "rm log.js"
+    "clean": "rm -f log.js"
   },
   "repository": {
     "type": "git",

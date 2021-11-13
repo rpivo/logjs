@@ -9,9 +9,21 @@ enum LogLevels {
   WARNING,
 }
 
-function exit(exitReason: string, exitCode = LogLevels.ERROR) {
-  log(exitReason, exitCode);
-  log('Exiting...', LogLevels.LOG);
+interface Context {
+  module: string;
+  debug: (message: string) => void;
+  error: (message: string) => void;
+  info: (message: string) => void;
+  log: (message: string, logLevel?: LogLevels) => void;
+  success: (message: string) => void;
+  warning: (message: string) => void;
+}
+
+let module = '';
+
+function exit(this: Context, exitReason: string, exitCode = LogLevels.ERROR) {
+  log.bind(this)(exitReason, exitCode);
+  log.bind(this)('Exiting...', LogLevels.LOG);
   process.exit(exitCode);
 }
 
@@ -23,7 +35,11 @@ function getCallerFromStackTrace() {
   return callerLine?.substring(callerLine.lastIndexOf('/') + 1).split(':')[0];
 }
 
-function log(message: string, logLevel = LogLevels.LOG) {
+function log(this: Context, message: string, logLevel = LogLevels.LOG) {
+  if (this?.module !== undefined) {
+    module = this.module;
+  }
+
   const caller = getCallerFromStackTrace();
 
   const Logs = {
@@ -55,30 +71,30 @@ function log(message: string, logLevel = LogLevels.LOG) {
 
   const { prefix, color } = Logs[logLevel];
 
-  console.log(`${caller} [${prefix}]`, color(message), '\n');
+  console.log(`${module || caller} [${prefix}]`, color(message), '\n');
 }
 
-function debug(message: string) {
-  log(message, LogLevels.DEBUG);
+function debug(this: Context, message: string) {
+  log.bind(this)(message, LogLevels.DEBUG);
 }
 
-function error(message: string) {
-  log(message, LogLevels.ERROR);
+function error(this: Context, message: string) {
+  log.bind(this)(message, LogLevels.ERROR);
 }
 
-function info(message: string) {
-  log(message, LogLevels.INFO);
+function info(this: Context, message: string) {
+  log.bind(this)(message, LogLevels.INFO);
 }
 
-function success(message: string) {
-  log(message, LogLevels.SUCCESS);
+function success(this: Context, message: string) {
+  log.bind(this)(message, LogLevels.SUCCESS);
 }
 
-function warning(message: string) {
-  log(message, LogLevels.WARNING);
+function warning(this: Context, message: string) {
+  log.bind(this)(message, LogLevels.WARNING);
 }
 
-const logger = { debug, error, info, log, success, warning };
+const logger = { module, debug, error, info, log, success, warning };
 
 export default logger;
 export { exit };

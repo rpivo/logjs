@@ -1,6 +1,6 @@
 {
   "name": "@rpivo/logjs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A little Chalk logger that gets the job done.",
   "main": "log.js",
   "scripts": {

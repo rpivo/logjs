@@ -15,37 +15,47 @@ function exit(exitReason: string, exitCode = LogLevels.ERROR) {
   process.exit(exitCode);
 }
 
+function getCallerFromStackTrace() {
+  const callerLine = new Error().stack
+    ?.split('\n')
+    .filter((line) => !line.includes('log.js'))[1]
+    .trim();
+  return callerLine?.substring(callerLine.lastIndexOf('/') + 1).split(':')[0];
+}
+
 function log(message: string, logLevel = LogLevels.LOG) {
+  const caller = getCallerFromStackTrace();
+
   const Logs = {
     [LogLevels.DEBUG]: {
-      prefix: '[DEBUG]',
-      color: chalk.yellow,
+      prefix: 'DEBUG',
+      color: chalk.magentaBright,
     },
     [LogLevels.ERROR]: {
-      prefix: '[ERROR]',
+      prefix: 'ERROR',
       color: chalk.redBright,
     },
     [LogLevels.INFO]: {
-      prefix: '[INFO]',
+      prefix: 'INFO',
       color: chalk.blueBright,
     },
     [LogLevels.LOG]: {
-      prefix: '[LOG]',
+      prefix: 'LOG',
       color: chalk.white,
     },
     [LogLevels.SUCCESS]: {
-      prefix: '[SUCCESS]',
+      prefix: 'SUCCESS',
       color: chalk.greenBright,
     },
     [LogLevels.WARNING]: {
-      prefix: '[WARNING]',
+      prefix: 'WARNING',
       color: chalk.yellow,
     },
   };
 
   const { prefix, color } = Logs[logLevel];
 
-  console.log(prefix, color(message), '\n');
+  console.log(`${caller} [${prefix}]`, color(message), '\n');
 }
 
 function debug(message: string) {

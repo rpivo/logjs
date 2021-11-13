@@ -5,7 +5,8 @@
   "main": "log.js",
   "scripts": {
     "build": "npm run clean && tsc",
-    "clean": "rm -f log.js"
+    "clean": "rm -f log.js",
+    "test:e2e": "node test/log.e2e.test.js"
   },
   "repository": {
     "type": "git",

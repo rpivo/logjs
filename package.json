@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rm -f log.js",
-    "release": "npm pack && ls | grep -v *.tgz | xargs rm -rf && rm .[!.]*",
+    "release": "sh scripts/release.sh",
     "test:e2e": "node test/log.e2e.test.js"
   },
   "repository": {
